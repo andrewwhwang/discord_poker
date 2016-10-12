@@ -204,7 +204,7 @@ class Texasholdem():
                     try:
                         if command[:3].lower() == "!r ":
                             bet = int(command[3:])
-                        elif command[:7].lower() == "!raise "
+                        elif command[:7].lower() == "!raise ":
                             bet = int(command[7:])
                     except:
                         return None
