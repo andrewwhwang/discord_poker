@@ -1,6 +1,5 @@
 import discord
 import random
-import discord
 import asyncio
 from texasholdem import Texasholdem
 from PIL import Image
