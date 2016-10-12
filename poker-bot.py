@@ -159,5 +159,5 @@ def create_message(players, previous, pots):
     msg += action_str + ", it's your turn. Respond with\n!r\t!c\t!f"
     return msg
 
-
-client.run('token here')
+import password
+client.run(password.token)
