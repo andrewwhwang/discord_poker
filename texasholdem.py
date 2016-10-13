@@ -278,39 +278,39 @@ def create_message(players, previous, pots):
         msg += action_str + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
     return msg
 #
-game = Texasholdem(['ann','bob'])
+# game = Texasholdem(['ann','bob'])
 # game.players[0].change_chips(-75)
 # game.players[1].change_chips(-50)
 
-game.parse("!yes", "random")
+# game.parse("!yes", "random")
 # print(game.com_cards)
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'bob')
+# game.parse('!c', 'bob')
 # print(game.com_cards)
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'ann')
+# game.parse('!c', 'ann')
 # print(game.com_cards)
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'bob')
+# game.parse('!c', 'bob')
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'ann')
+# game.parse('!c', 'ann')
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'bob')
+# game.parse('!c', 'bob')
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'ann')
+# game.parse('!c', 'ann')
 # print(create_message(game.players,"", game.pots))
 #
 #
-game.parse('!c', 'bob')
+# game.parse('!c', 'bob')
 # print(create_message(game.players,"", game.pots))
 #
-game.parse('!c', 'ann')
-print(create_message(game.players,game.previous, game.pots))
-game.parse("!ok", "random")
+# game.parse('!c', 'ann')
+# print(create_message(game.players,game.previous, game.pots))
+# game.parse("!ok", "random")
 # print(create_message(game.players,game.previous, game.pots))
