@@ -98,17 +98,17 @@ async def on_message(message):
 
 
     elif message.content == "!help":
-        await client.send_message(message.channel,"```Poker-bot by Andrew --version= 0.1\n\n"
+        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.2\n\n"
         "Recognized commands:\n"
-        "\t!help\tdisplays this message\n"
-        "\t!startgame\tstarts an game of texas holdem\n"
-        "\t!stopgame\tends the current game for everyone\n"
-        "\t!quit\tremoves only you from the current game\n"
-        "\t!status(not working)\trepeats the status of the game\n"
-        "\t!(C)all\tCall\n"
-        "\t!(C)heck\tCheck\n"
-        "\t!(F)old\tfold\n"
-        "\t!(R)aise x\traise by x amount\n```")
+        "\t!help\t     Displays this message\n"
+        "\t!startgame\tStarts an game of texas holdem\n"
+        "\t!stopgame\t Ends the current game for everyone\n"
+        "\t!quit\t     Removes only you from the current game(not sure if works)\n"
+        "\t!status\t   Repeats the status of the game(not working)\n"
+        "\t!(C)all\t   Call\n"
+        "\t!(C)heck\t  Check\n"
+        "\t!(F)old\t   Fold\n"
+        "\t!(R)aise x\tRaise by x amount\n```")
 
 def check(msg):
     return msg.content == '!yes' or msg.content == '!no'
@@ -140,7 +140,7 @@ def create_message(players, previous, pots):
     action_str = ""
     if "had" in previous:
         standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-        msg = "```\n"+previous+"\n"+standings+"\ntype !ok to continue\n```"
+        msg = "```\n"+previous+"\n"+standings+"\n```\n!ok to continue"
     else:
         msg = previous+"\n```\n"
         msg += "\tPlayers\t    Chips\tBlinds\tBets\tStatus\n"
@@ -154,7 +154,7 @@ def create_message(players, previous, pots):
             if p.SB:
                 blind_char = "\t  ⓑ\t    "
             elif p.BB:
-                blind_char = "\t  Ⓑ\t    "
+                blind_char = "\t Ⓑ\t    "
 
             status_char = "\n"
             if p.has_folded:
