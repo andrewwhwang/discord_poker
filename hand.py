@@ -42,6 +42,10 @@ class Hand(object):
         return 'Hand(%s: %s)' % (self.names[self.value],
                                  ', '.join(str(c) for c in self.best_cards))
 
+    def str_sym(self):
+        return 'Hand(%s: %s)' % (self.names[self.value],
+                                 ', '.join(c.str_sym() for c in self.best_cards))
+
     def __iadd__(self, other):
         if isinstance(other, list):
             return Hand(self.cards + other)
