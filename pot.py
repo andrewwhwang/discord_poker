@@ -37,13 +37,3 @@ class Pots():
 
     def __str__(self):
         return "\n".join([str(pot) for pot in self.list_pots if pot.get_total() > 0])
-# import player
-# a = player.Player("a")
-# b = player.Player("b")
-# c = player.Player("c")
-# a.chips =19
-# b.chips =15
-# c.chips = 100
-# p = Pots([a,b,c])
-# p.add_bet(a, 19)
-# print(p)

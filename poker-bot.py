@@ -26,7 +26,7 @@ async def on_message(message):
     if message.content =='!startgame' and not game_ongoing:
         game_ongoing = True
         player_list = []
-        time = 15 ###########debug = 5 normal = 20
+        time = 20 ###########debug = 5 normal = 20
         tmp = await client.send_message(message.channel, "```Who's playing?\n"
                                                         "Enter game by saying: me\n"
                                                         "Time left:"+str(time)+"```")
@@ -78,9 +78,9 @@ async def on_message(message):
             if command != None:
                 game_rounds = game.round
                 update_player_list(game.losers)
-                if game.hole_cards != []:
+                if game.round == 0:
                     for i, p in enumerate(player_list):
-                        await client.send_file(p, combine_png(game.hole_cards[i], str(p)))
+                        await client.send_file(p, combine_png([str(c) for c in players[i].hand.cards], str(p)))
                 await client.send_message(message.channel, create_message(game.players, game.previous, game.pots))
                 # if game.com_cards != []:
                 if len(game.com_cards) != 0 and len(game.com_cards) != num_com_cards:
@@ -98,7 +98,7 @@ async def on_message(message):
 
 
     elif message.content == "!help":
-        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.2\n\n"
+        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.3\n\n"
         "Recognized commands:\n"
         "\t!help\t     Displays this message\n"
         "\t!startgame\tStarts an game of texas holdem\n"
@@ -136,36 +136,40 @@ def combine_png(cards, name):
     new_im.save('tmp/'+name+'.png')
     return 'tmp/'+name+'.png'
 
-def create_message(players, previous, pots):
-    action_str = ""
+def create_message(game):
+    previous = game.previous
+    players = game.players
+    pots = game.pots
     if "had" in previous:
         standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-        msg = "```\n"+previous+"\n"+standings+"\n```\n!ok to continue"
+        msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
     else:
         msg = previous+"\n```\n"
-        msg += "\tPlayers\t    Chips\tBlinds\tBets\tStatus\n"
+        msg += "  Players        Chips    Blinds    Bets    Status\n"
+        msg += "——————————————————————————————————————————————————\n"
         for p in players:
-            action_char = "\t"
-            if p.action:
-                action_char = "→   "
-                action_str = str(p)
+            action_char = "  "
+            if p == players[game.action]:
+                action_char = "→ "
 
-            blind_char = "\t\t"
-            spaces = " " * min(6 - len(str(p.chips)),0)
-            if p.SB:
-                blind_char = "\t"+spaces+"ⓑ\t    "
-            elif p.BB:
-                blind_char = "\t"+spaces+"Ⓑ\t    "
+            spaces = " " * (8 - len(str(p.chips)))
+            blind_char = spaces + "–         "
+            if p == players[game.b_index]:
+                blind_char = spaces + "ⓑ        "
+            elif p == players[game.B_index]:
+                blind_char = spaces + "Ⓑ        "
 
             status_char = "\n"
-            if p.has_folded:
-                status_char = "\tⒻ\n"
+            if p in game.folded_players:
+                status_char = "Ⓕ\n"
             if p.chips <= 0:
-                status_char = "\tⒶ\n"
-            msg += action_char + p.name[:11] + "\t$" + str(p.chips) + blind_char + p.get_current_bet()+status_char
+                status_char = "Ⓐ\n"
+            name = p.name[:11] + " " * (11 - len(p.name[:11]))
+            current = str(p.get_current_bet()) + " " * (8 - len(str(p.get_current_bet())))
+            msg += action_char + name + "    $" + str(p.chips) + blind_char + current + status_char
         msg += "\n```\n"
-        msg += str(pots) +"\n"
-        msg += action_str + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
+        msg += str(pots) +"\n\n"
+        msg += "`"+players[game.action].name + "`, it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
     return msg
 
 import password
