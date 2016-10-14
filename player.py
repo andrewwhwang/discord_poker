@@ -1,5 +1,5 @@
 class Player():
-    def __init__(self, name, startingChips=100):
+    def __init__(self, name, startingChips=1000):
         self.name = name
         self.chips = startingChips
         self.dealer = False

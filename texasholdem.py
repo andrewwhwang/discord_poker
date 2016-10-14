@@ -251,7 +251,7 @@ def create_message(players, previous, pots):
     action_str = ""
     if "had" in previous:
         standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-        msg = "```\n"+previous+"\n"+standings+"\ntype !ok to continue\n```"
+        msg = "```\n"+previous+"\n"+standings+"\n```\n!ok to continue"
     else:
         msg = previous+"\n```\n"
         msg += "\tPlayers\t    Chips\tBlinds\tBets\tStatus\n"
@@ -262,10 +262,11 @@ def create_message(players, previous, pots):
                 action_str = str(p)
 
             blind_char = "\t\t"
+            spaces = " " * min(5 - len(str(p.chips)),0)
             if p.SB:
-                blind_char = "\t  ⓑ\t    "
+                blind_char = "\t"+spaces+"ⓑ\t    "
             elif p.BB:
-                blind_char = "\t  Ⓑ\t    "
+                blind_char = "\t"+spaces+"Ⓑ\t    "
 
             status_char = "\n"
             if p.has_folded:
@@ -278,15 +279,15 @@ def create_message(players, previous, pots):
         msg += action_str + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
     return msg
 
-# game = Texasholdem(['ann','bob'])
+game = Texasholdem(['ann','bob','cat'])
 # game.players[0].change_chips(-75)
 # game.players[1].change_chips(-50)
 
 # game.parse("!yes", "random")
 # print(create_message(game.players,game.previous, game.pots))
-# game.parse('!r 5', 'bob')
+# game.parse('!f', 'bob')
 # print(create_message(game.players,game.previous, game.pots))
-# game.parse('!r 1', 'ann')
+# game.parse('!c', 'ann')
 # print(create_message(game.players,game.previous, game.pots))
 # game.parse('!c', 'bob')
 # game.parse('!c', 'ann')
