@@ -23,10 +23,24 @@ async def on_message(message):
     global game
     global player_list
     global num_com_cards
-    if message.content =='!startgame' and not game_ongoing:
+
+    if message.content == "!help":
+        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.3\n\n"
+        "Recognized commands:\n"
+        "\t!help\t     Displays this message\n"
+        "\t!startgame\tStarts an game of texas holdem\n"
+        "\t!stopgame\t Ends the current game for everyone\n"
+        "\t!quit\t     Removes only you from the current game(not sure if works)\n"
+        "\t!status\t   Repeats the status of the game\n"
+        "\t!(C)all\t   Call\n"
+        "\t!(C)heck\t  Check\n"
+        "\t!(F)old\t   Fold\n"
+        "\t!(R)aise x\tRaise by x amount\n```")
+
+    elif message.content =='!startgame' and not game_ongoing:
         game_ongoing = True
         player_list = []
-        time = 20 ###########debug = 5 normal = 20
+        time = 5 ###########debug = 5 normal = 20
         tmp = await client.send_message(message.channel, "```Who's playing?\n"
                                                         "Enter game by saying: me\n"
                                                         "Time left:"+str(time)+"```")
@@ -70,45 +84,22 @@ async def on_message(message):
                 if p.name == str(message.author):
                     game.players.remove(p)
         elif message.content == "!status":
-            print("status")
+            await client.send_message(message.channel, create_message(game))
 ######################################################################
         else:
-            # message.content == "!c" or message.content.startswith == "!r" or message.content == "!f":
             command = game.parse(message.content, str(message.author))
             if command != None:
                 game_rounds = game.round
                 update_player_list(game.losers)
-                if game.round == 0:
+                if command == 0:
                     for i, p in enumerate(player_list):
-                        await client.send_file(p, combine_png([str(c) for c in players[i].hand.cards], str(p)))
-                await client.send_message(message.channel, create_message(game.players, game.previous, game.pots))
+                        await client.send_file(p, combine_png([str(c) for c in game.players[i].hand.cards], str(p)))
+                await client.send_message(message.channel, create_message(game))
                 # if game.com_cards != []:
                 if len(game.com_cards) != 0 and len(game.com_cards) != num_com_cards:
                     await client.send_file(message.channel,combine_png(game.com_cards, "community"), content="Community Cards:")
                 num_com_cards = len(game.com_cards)
 
-
-    # for p in player_list:
-    #     p_list,prev,pots,hole_msg = game.deal_player(str(p))
-    #     await client.send_message(message.channel, create_message(p_list,prev,pots))
-    #     await client.send_file(p, combine_png(hole_msg, str(p)))
-
-
-
-
-
-    elif message.content == "!help":
-        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.3\n\n"
-        "Recognized commands:\n"
-        "\t!help\t     Displays this message\n"
-        "\t!startgame\tStarts an game of texas holdem\n"
-        "\t!stopgame\t Ends the current game for everyone\n"
-        "\t!quit\t     Removes only you from the current game(not sure if works)\n"
-        "\t!status\t   Repeats the status of the game(not working)\n"
-        "\t!(C)all\t   Call\n"
-        "\t!(C)heck\t  Check\n"
-        "\t!(F)old\t   Fold\n"
-        "\t!(R)aise x\tRaise by x amount\n```")
 
 def check(msg):
     return msg.content == '!yes' or msg.content == '!no'

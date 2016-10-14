@@ -12,11 +12,6 @@ class Texasholdem():
         self.all_in_players = []
         self.smallBlind = smallBlind
         self.bigBlind = bigBlind
-        # self.deck = deck.Deck()
-        # self.com_cards = []
-        # self.hole_cards = []
-        # self.round = 0
-        # self.pots = pot.Pots(self.players)
         self.previous = ""
         self.losers = []
         self.dealt = False
@@ -44,7 +39,7 @@ class Texasholdem():
         for i, player in enumerate(self.players):
             #deal player hold cards
             player.hand = hand.Hand(self.deck.draw(2))
-            #
+            print(player, player.hand)
             player.has_acted = False
 
     def reset_action(self):
@@ -54,9 +49,8 @@ class Texasholdem():
             self.action = (1 + self.dealer) % len(self.players)
     #############main functions##############
     def setup_game(self):
-        print("setting up game")
+        print("======================setting up game======================")
         #to work, needs self.dealer to be correct
-        # self.hole_cards = []
         self.pots = pot.Pots(self.players)
         self.com_cards = []
         self.deck = deck.Deck()
@@ -102,10 +96,6 @@ class Texasholdem():
         self.increment_action(0)
         self.highest_bet = 0
         if self.round <= 3:
-            #resets hold_cards so bot doesn't pm every time
-            # if self.round != 0:
-            #     self.hole_cards = []
-
             draw = self.deck.draw(com_card_map[self.round])
             for p in self.players:
                 p.current_bet = 0
@@ -116,9 +106,7 @@ class Texasholdem():
         else:
             self.winner("")
 
-        # if len([p for p in self.players if p.chips > 0 or not p.has_folded]):
-        #     next_round()
-    #
+
     def winner(self,condition):
         winners = []
         for pot in self.pots.list_pots:
@@ -150,7 +138,6 @@ class Texasholdem():
         self.dealer += 1
         self.dealt = False
         print("==========================endofgame==========================")
-        # self.setup_game()
 
     def call(self, player):
         bet = min(self.highest_bet - player.current_bet, player.chips)
@@ -168,7 +155,6 @@ class Texasholdem():
 
     def raise_up(self,player,num):
         self.highest_bet += num + player.current_bet
-        print("highest_bet = "+str(self.highest_bet))
         bet = min(self.highest_bet, player.chips)
         self.pots.add_bet(player, bet)
         player.chips -= bet
@@ -187,6 +173,7 @@ class Texasholdem():
         if not self.dealt:
             self.setup_game()
             self.dealt = True
+            return 0
         else:
             player = self.players[self.action]
             if player_str == player.name:
@@ -216,7 +203,7 @@ class Texasholdem():
                 self.check_end()
             else:
                 return None
-        return 1
+            return 1
 
 
 # def create_message(game):
@@ -251,8 +238,8 @@ class Texasholdem():
 #         msg += str(pots) +"\n\n"
 #         msg += players[game.action].name + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
 #     return msg
-#
-#
+
+
 # game = Texasholdem(['ann','bob','cat'])
 # game.players[0].change_chips(-750)
 # game.players[1].change_chips(-500)
@@ -260,16 +247,16 @@ class Texasholdem():
 # game.parse("!yes", "random")
 # print(create_message(game))
 # print("....................................................................")
-# game.parse('!r 100', 'ann')
+# game.parse('!c', 'ann')
 # print(create_message(game))
 # print("....................................................................")
-# game.parse('!r 370', 'bob')
+# game.parse('!c', 'bob')
 # print(create_message(game))
 # print("....................................................................")
 # game.parse('!c', 'cat')
 # print(create_message(game))
 # print("....................................................................")
-# game.parse('!f', 'ann')
+# game.parse('!c', 'ann')
 # print(create_message(game))
 # print("....................................................................")
 # game.parse('!c', 'cat')
