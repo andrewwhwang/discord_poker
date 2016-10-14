@@ -66,7 +66,7 @@ class Texasholdem():
         self.all_in_players = []
         self.setup_hole_cards()
         self.losers = []
-        
+
         #setups up blinds
         self.setup_blinds()
         self.highest_bet = self.bigBlind
@@ -219,59 +219,59 @@ class Texasholdem():
         return 1
 
 
-def create_message(game):
-    previous = game.previous
-    players = game.players
-    pots = game.pots
-    if "had" in previous:
-        standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-        msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
-    else:
-        msg = previous+"\n```\n"
-        msg += "\tPlayers\tChips\tBlinds\tBets\tStatus\n"
-        for p in players:
-            action_char = "\t"
-            if p == players[game.action]:
-                action_char = "→\t"
-
-            blind_char = "\t-\t"
-            # spaces = " " * (5 - len(str(p.chips)))
-            if p == players[game.b_index]:
-                blind_char = "\tⓑ\t"
-            elif p == players[game.B_index]:
-                blind_char = "\tⒷ\t"
-
-            status_char = "\n"
-            if p in game.folded_players:
-                status_char = "\tⒻ\n"
-            if p.chips <= 0:
-                status_char = "\tⒶ\n"
-            msg += action_char + p.name[:11] + "\t$" + str(p.chips) + blind_char + p.get_current_bet()+status_char
-        msg += "\n```\n"
-        msg += str(pots) +"\n\n"
-        msg += players[game.action].name + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
-    return msg
-
-
-game = Texasholdem(['ann','bob','cat'])
-game.players[0].change_chips(-750)
-game.players[1].change_chips(-500)
-
-game.parse("!yes", "random")
-print(create_message(game))
-print("....................................................................")
-game.parse('!r 100', 'ann')
-print(create_message(game))
-print("....................................................................")
-game.parse('!r 370', 'bob')
-print(create_message(game))
-print("....................................................................")
-game.parse('!c', 'cat')
-print(create_message(game))
-print("....................................................................")
-game.parse('!f', 'ann')
-print(create_message(game))
-print("....................................................................")
+# def create_message(game):
+#     previous = game.previous
+#     players = game.players
+#     pots = game.pots
+#     if "had" in previous:
+#         standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
+#         msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
+#     else:
+#         msg = previous+"\n```\n"
+#         msg += "\tPlayers\tChips\tBlinds\tBets\tStatus\n"
+#         for p in players:
+#             action_char = "\t"
+#             if p == players[game.action]:
+#                 action_char = "→\t"
+#
+#             blind_char = "\t-\t"
+#             # spaces = " " * (5 - len(str(p.chips)))
+#             if p == players[game.b_index]:
+#                 blind_char = "\tⓑ\t"
+#             elif p == players[game.B_index]:
+#                 blind_char = "\tⒷ\t"
+#
+#             status_char = "\n"
+#             if p in game.folded_players:
+#                 status_char = "\tⒻ\n"
+#             if p.chips <= 0:
+#                 status_char = "\tⒶ\n"
+#             msg += action_char + p.name[:11] + "\t$" + str(p.chips) + blind_char + p.get_current_bet()+status_char
+#         msg += "\n```\n"
+#         msg += str(pots) +"\n\n"
+#         msg += players[game.action].name + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
+#     return msg
+#
+#
+# game = Texasholdem(['ann','bob','cat'])
+# game.players[0].change_chips(-750)
+# game.players[1].change_chips(-500)
+#
+# game.parse("!yes", "random")
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!r 100', 'ann')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!r 370', 'bob')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!c', 'cat')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!f', 'ann')
+# print(create_message(game))
+# print("....................................................................")
 # game.parse('!c', 'cat')
 # print(create_message(game))
 # print("....................................................................")
