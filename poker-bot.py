@@ -25,12 +25,13 @@ async def on_message(message):
     global num_com_cards
 
     if message.content == "!help":
-        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.3\n\n"
+        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.4\n\n"
         "Recognized commands:\n"
         "\t!help\t     Displays this message\n"
         "\t!startgame\tStarts an game of texas holdem\n"
         "\t!stopgame\t Ends the current game for everyone\n"
-        "\t!quit\t     Removes only you from the current game(not sure if works)\n"
+        "\t!quit\t     Removes only you from the current game(doesn't works)\n"
+        "\t!join\t     Join the current game(doesn't works)\n"
         "\t!status\t   Repeats the status of the game\n"
         "\t!(C)all\t   Call\n"
         "\t!(C)heck\t  Check\n"
