@@ -40,7 +40,7 @@ async def on_message(message):
     elif message.content =='!startgame' and not game_ongoing:
         game_ongoing = True
         player_list = []
-        time = 5 ###########debug = 5 normal = 20
+        time = 20 ###########debug = 5 normal = 20
         tmp = await client.send_message(message.channel, "```Who's playing?\n"
                                                         "Enter game by saying: me\n"
                                                         "Time left:"+str(time)+"```")
@@ -160,7 +160,7 @@ def create_message(game):
             msg += action_char + name + "    $" + str(p.chips) + blind_char + current + status_char
         msg += "\n```\n"
         msg += str(pots) +"\n\n"
-        msg += "`"+players[game.action].name + "`, it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
+        msg += "`@"+players[game.action].name + "`, it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
     return msg
 
 import password

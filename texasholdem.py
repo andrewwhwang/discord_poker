@@ -42,6 +42,9 @@ class Texasholdem():
             print(player, player.hand)
             player.has_acted = False
 
+            #
+            player.current_bet = 0
+
     def reset_action(self):
         if self.round == 0:
             self.action = (3 + self.dealer) % len(self.players)
@@ -79,7 +82,9 @@ class Texasholdem():
         if len(self.folded_players) == len(self.players) - 1:
             self.winner("folded")
 
-        elif len(self.folded_players) + len(self.all_in_players) == len(self.players) - 1:
+        #skip to the end if all non-folded people have acted and are all-in
+        elif len(self.folded_players) + len(self.all_in_players) == len(self.players) - 1 and \
+            all([p.has_acted for p in self.players if p not in self.folded_players and p not in self.all_in_players]):
             while self.round <= 3:
                 self.next_round()
 
@@ -88,7 +93,7 @@ class Texasholdem():
             self.next_round()
 
     def next_round(self):
-        print("--------------------------next_round--------------------------")
+        print("--------------------------round "+str(self.round+1)+"--------------------------")
         com_card_map = [0,3,1,1]
         # self.losers = []
         self.round += 1
@@ -111,6 +116,9 @@ class Texasholdem():
         winners = []
         for pot in self.pots.list_pots:
             if len(pot.players_chips) >= 2:
+                ####################################################################
+                print(pot.name,[p.name for p in pot.players_chips.keys()])
+                print("folded_players: ",[p.name for p in self.folded_players])
                 players = [p for p in pot.players_chips.keys() if p not in self.folded_players]
                 players.sort(key=lambda p: p.hand, reverse=True)
                 winners = [players[0]]
@@ -163,9 +171,8 @@ class Texasholdem():
             self.all_in_players.append(player)
 
         for p in self.players:
-            if p not in self.folded_players:
+            if p not in self.folded_players or p not in self.all_in_players:
                 p.has_acted = False
-
         player.has_acted = True
         #set everyone thats still in to has_acted = False
 
@@ -203,72 +210,77 @@ class Texasholdem():
                 self.check_end()
             else:
                 return None
+            print(self.previous)
+            print(create_message(self))
             return 1
 
 
-# def create_message(game):
-#     previous = game.previous
-#     players = game.players
-#     pots = game.pots
-#     if "had" in previous:
-#         standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-#         msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
-#     else:
-#         msg = previous+"\n```\n"
-#         msg += "\tPlayers\tChips\tBlinds\tBets\tStatus\n"
-#         for p in players:
-#             action_char = "\t"
-#             if p == players[game.action]:
-#                 action_char = "→\t"
-#
-#             blind_char = "\t-\t"
-#             # spaces = " " * (5 - len(str(p.chips)))
-#             if p == players[game.b_index]:
-#                 blind_char = "\tⓑ\t"
-#             elif p == players[game.B_index]:
-#                 blind_char = "\tⒷ\t"
-#
-#             status_char = "\n"
-#             if p in game.folded_players:
-#                 status_char = "\tⒻ\n"
-#             if p.chips <= 0:
-#                 status_char = "\tⒶ\n"
-#             msg += action_char + p.name[:11] + "\t$" + str(p.chips) + blind_char + p.get_current_bet()+status_char
-#         msg += "\n```\n"
-#         msg += str(pots) +"\n\n"
-#         msg += players[game.action].name + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
-#     return msg
+def create_message(game):
+    previous = ""#game.previous
+    players = game.players
+    pots = game.pots
+    if "had" in previous:
+        standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
+        msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
+    else:
+        msg = previous+"\n```\n"
+        msg += "\tPlayers\tChips\tBlinds\tBets\tStatus\n"
+        for p in players:
+            action_char = "\t"
+            if p == players[game.action]:
+                action_char = "→\t"
+
+            blind_char = "\t-\t"
+            # spaces = " " * (5 - len(str(p.chips)))
+            if p == players[game.b_index]:
+                blind_char = "\tⓑ\t"
+            elif p == players[game.B_index]:
+                blind_char = "\tⒷ\t"
+
+            status_char = "\n"
+            if p in game.folded_players:
+                status_char = "\tⒻ\n"
+            if p.chips <= 0:
+                status_char = "\tⒶ\n"
+            msg += action_char + p.name[:11] + "\t$" + str(p.chips) + blind_char + p.get_current_bet()+status_char
+        msg += "\n```\n"
+        msg += str(pots) +"\n\n"
+        msg += players[game.action].name + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
+        msg += "\n...................................................................."
+    return msg
 
 
-# game = Texasholdem(['ann','bob','cat'])
-# game.players[0].change_chips(-750)
+# game = Texasholdem(['ann','bob','cat','dan'])
+# game.players[0].change_chips(750)
 # game.players[1].change_chips(-500)
 #
+#
 # game.parse("!yes", "random")
+# print([p.max_per for p in game.pots.list_pots])
 # print(create_message(game))
 # print("....................................................................")
-# game.parse('!c', 'ann')
+# game.parse('!f', 'dan')
 # print(create_message(game))
 # print("....................................................................")
-# game.parse('!c', 'bob')
-# print(create_message(game))
-# print("....................................................................")
-# game.parse('!c', 'cat')
-# print(create_message(game))
-# print("....................................................................")
-# game.parse('!c', 'ann')
-# print(create_message(game))
-# print("....................................................................")
-# game.parse('!c', 'cat')
-# print(create_message(game))
-# print("....................................................................")
-# game.parse('!c', 'ann')
+# game.parse('!r 400', 'ann')
 # print(create_message(game))
 # print("....................................................................")
 # game.parse('!c', 'bob')
 # print(create_message(game))
 # print("....................................................................")
-# game.parse('!c', 'cat')
+# game.parse('!f', 'cat')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!c', 'bob')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!r 20', 'ann')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!r 60', 'bob')
+# print(create_message(game))
+# print("....................................................................")
+# game.parse('!c', 'ann')
 # print(create_message(game))
 # print("....................................................................")
 # game.parse('!c', 'ann')
