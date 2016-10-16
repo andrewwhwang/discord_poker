@@ -25,7 +25,7 @@ async def on_message(message):
     global num_com_cards
 
     if message.content == "!help":
-        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.4\n\n"
+        await client.send_message(message.channel,"```Poker-bot by Andrew --version 0.5\n\n"
         "Recognized commands:\n"
         "\t!help\t     Displays this message\n"
         "\t!startgame\tStarts an game of texas holdem\n"
@@ -86,6 +86,8 @@ async def on_message(message):
                     game.players.remove(p)
         elif message.content == "!status":
             await client.send_message(message.channel, create_message(game))
+            if len(game.com_cards) != 0 and len(game.com_cards) != num_com_cards:
+                await client.send_file(message.channel,combine_png(game.com_cards, "community"), content="Community Cards:")
 ######################################################################
         else:
             command = game.parse(message.content, str(message.author))
@@ -134,7 +136,7 @@ def create_message(game):
     pots = game.pots
     if "had" in previous:
         standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-        msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
+        msg = previous+"\n```\n"+standings+"\n```\n!ok to continue"
     else:
         msg = previous+"\n```\n"
         msg += "  Players        Chips    Blinds    Bets    Status\n"
@@ -145,11 +147,23 @@ def create_message(game):
                 action_char = "→ "
 
             spaces = " " * (8 - len(str(p.chips)))
-            blind_char = spaces + "–         "
+            blind_char = "—"
+            post_space_counter = 10
             if p == players[game.b_index]:
-                blind_char = spaces + "ⓑ        "
+                blind_char = "ⓑ"
+                post_space_counter-=2
             elif p == players[game.B_index]:
-                blind_char = spaces + "Ⓑ        "
+                blind_char = "Ⓑ"
+                post_space_counter-=2
+            if p == game.players[game.dealer % len(game.players)]:
+                if blind_char == "—":
+                    blind_char = "Ⓓ"
+                    post_space_counter-=2
+                else:
+                    blind_char += "Ⓓ"
+                    post_space_counter-=2
+            post_spaces = " " * post_space_counter
+            blind_char = spaces + blind_char + post_spaces
 
             status_char = "\n"
             if p in game.folded_players:
@@ -161,7 +175,7 @@ def create_message(game):
             msg += action_char + name + "    $" + str(p.chips) + blind_char + current + status_char
         msg += "\n```\n"
         msg += str(pots) +"\n\n"
-        msg += "`@"+players[game.action].name + "`, it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
+        msg += "@"+players[game.action].name + ", it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
     return msg
 
 import password

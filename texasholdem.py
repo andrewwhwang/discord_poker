@@ -74,12 +74,12 @@ class Texasholdem():
     def increment_action(self,increment):
         #find next player that hasn't folded and still has money
         self.action = (self.action + increment) % len(self.players)
-        print(self.players[self.action],self.action)
+        # print(self.players[self.action],self.action)
         counter = 0
         while (self.players[self.action] in self.folded_players or self.players[self.action] in self.all_in_players) and counter < len(self.players):
             self.action = (self.action + 1) % len(self.players)
             counter += 1
-        print (counter)
+        # print (counter)
 
     def check_end(self):
         #check if everyone but one person folded out
@@ -121,8 +121,8 @@ class Texasholdem():
         for pot in self.pots.list_pots:
             if len(pot.players_chips) >= 2:
                 ####################################################################
-                print(pot.name,[p.name for p in pot.players_chips.keys()])
-                print("folded_players: ",[p.name for p in self.folded_players])
+                # print(pot.name,[p.name for p in pot.players_chips.keys()])
+                # print("folded_players: ",[p.name for p in self.folded_players])
                 players = [p for p in pot.players_chips.keys() if p not in self.folded_players]
                 players.sort(key=lambda p: p.hand, reverse=True)
                 if players:
@@ -167,7 +167,7 @@ class Texasholdem():
         player.has_acted = True
 
     def raise_up(self,player,num):
-        self.highest_bet += num + player.current_bet
+        self.highest_bet += num# + player.current_bet
         bet = min(self.highest_bet, player.chips)
         self.pots.add_bet(player, bet)
         player.chips -= bet
@@ -191,7 +191,7 @@ class Texasholdem():
             if player_str == player.name:
                 if command.lower() == "!c" or command.lower() == "!call" or command.lower() == "!check":
                     self.call(player)
-                    self.previous = "`"+player_str+"` has called/checked"
+                    self.previous = "@"+player_str+" has called/checked"
                 elif command[:3].lower() == "!r " or command[:7].lower() == "!raise ":
                     bet = 0
                     try:
@@ -201,14 +201,14 @@ class Texasholdem():
                             bet = int(command[7:])
                     except:
                         return None
-                    if bet + self.highest_bet > player.chips or bet < self.bigBlind:
+                    if bet + self.highest_bet > player.chips + player.current_bet or bet < self.bigBlind:
                         return None
                     self.raise_up(player,bet)
-                    self.previous = "`"+player_str+"` has raised by " + str(bet)
+                    self.previous = "@"+player_str+" has raised by " + str(bet)
                 elif command.lower() == "!f" or command.lower() == "!fold":
                     self.fold(player)
                     # player.has_folded = True
-                    self.previous = "`"+player_str+"` has folded"
+                    self.previous = "@"+player_str+" has folded"
                 else:
                     return None
                 self.increment_action(1)
@@ -218,57 +218,68 @@ class Texasholdem():
             # print(self.previous)
             # print(create_message(self))
             return 1
-#
-#
-# def create_message(game):
-#     try:
-#         previous = ""#game.previous
-#         players = game.players
-#         pots = game.pots
-#         if "had" in previous:
-#             standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
-#             msg = "```\n"+previous+"\n\n"+standings+"\n```\n!ok to continue"
-#         else:
-#             msg = previous+"\n```\n"
-#             msg += "\tPlayers\tChips\tBlinds\tBets\tStatus\n"
-#             for p in players:
-#                 action_char = "\t"
-#                 if p == players[game.action]:
-#                     action_char = "→\t"
-#
-#                 blind_char = "\t-\t"
-#                 # spaces = " " * (5 - len(str(p.chips)))
-#                 if p == players[game.b_index]:
-#                     blind_char = "\tⓑ\t"
-#                 elif p == players[game.B_index]:
-#                     blind_char = "\tⒷ\t"
-#
-#                 status_char = "\n"
-#                 if p in game.folded_players:
-#                     status_char = "\tⒻ\n"
-#                 if p.chips <= 0:
-#                     status_char = "\tⒶ\n"
-#                 msg += action_char + p.name[:11] + "\t$" + str(p.chips) + blind_char + p.get_current_bet()+status_char
-#             msg += "\n```\n"
-#             msg += str(pots) +"\n\n"
-#             msg += players[game.action].name + ", it's your turn. Respond with\n!(R)aise\t!(C)all\t!(F)old"
-#             msg += "\n...................................................................."
-#         return msg
-#     except IndexError:
-#         return "Index error"
 
 
-# game = Texasholdem(['ann','bob','cat','dan'])
+def create_message(game):
+    previous = game.previous
+    players = game.players
+    pots = game.pots
+    if "had" in previous:
+        standings = "\n".join([p.name+" now has $"+str(p.chips) for p in players])
+        msg = previous+"\n```\n"+standings+"\n```\n!ok to continue"
+    else:
+        msg = previous+"\n```\n"
+        msg += "  Players        Chips    Blinds    Bets    Status\n"
+        msg += "——————————————————————————————————————————————————\n"
+        for p in players:
+            action_char = "  "
+            if p == players[game.action]:
+                action_char = "→ "
+
+            spaces = " " * (8 - len(str(p.chips)))
+            blind_char = "—"
+            post_space_counter = 10
+            if p == players[game.b_index]:
+                blind_char = "ⓑ"
+                post_space_counter-=2
+            elif p == players[game.B_index]:
+                blind_char = "Ⓑ"
+                post_space_counter-=2
+            if p == game.players[game.dealer % len(game.players)]:
+                if blind_char == "—":
+                    blind_char = "Ⓓ"
+                    post_space_counter-=2
+                else:
+                    blind_char += "Ⓓ"
+                    post_space_counter-=2
+            post_spaces = " " * post_space_counter
+            blind_char = spaces + blind_char + post_spaces
+
+            status_char = "\n"
+            if p in game.folded_players:
+                status_char = "Ⓕ\n"
+            if p.chips <= 0:
+                status_char = "Ⓐ\n"
+            name = p.name[:11] + " " * (11 - len(p.name[:11]))
+            current = str(p.get_current_bet()) + " " * (8 - len(str(p.get_current_bet())))
+            msg += action_char + name + "    $" + str(p.chips) + blind_char + current + status_char
+        msg += "\n```\n"
+        msg += str(pots) +"\n\n"
+        msg += "@"+players[game.action].name + ", it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
+    return msg
+
+
+game = Texasholdem(['ann','bob'])
 # game.players[0].change_chips(750)
 # game.players[1].change_chips(-500)
 #
 #
-# game.parse("!yes", "random")
+game.parse("!yes", "random")
 # print([p.max_per for p in game.pots.list_pots])
-# print(create_message(game))
+print(create_message(game))
 # print("....................................................................")
-# game.parse('!r 980', 'dan')
-# print(create_message(game))
+game.parse('!r 980', 'bob')
+print(create_message(game))
 # print("....................................................................")
 # game.parse('!c', 'ann')
 # print(create_message(game))

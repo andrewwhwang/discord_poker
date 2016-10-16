@@ -6,7 +6,7 @@ class Pot():
         self.max_per = max_per
 
     def __str__(self):
-        eligible = ", ".join([pc.name for pc in self.players_chips.keys()])
+        eligible = ", ".join(["@"+pc.name for pc in self.players_chips.keys()])
         return '%s: $%s\t(%s are eligible to take)' % (self.name, self.get_total(),eligible)
 
     def get_total(self):
