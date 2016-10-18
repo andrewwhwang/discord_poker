@@ -3,6 +3,8 @@ import random
 import asyncio
 from texasholdem import Texasholdem
 from PIL import Image
+import praw
+from itertools import islice
 
 game_ongoing = False
 client = discord.Client()
@@ -37,6 +39,20 @@ async def on_message(message):
         "\t!(C)heck\t  Check\n"
         "\t!(F)old\t   Fold\n"
         "\t!(R)aise x\tRaise by x amount\n```")
+
+    elif message.content.lower().startswith('!just'):
+        r = praw.Reddit(user_agent='asdfasdfasdf')
+        subreddit = r.get_subreddit("justfuckmyshitup")
+        a = subreddit.get_top_from_all(limit=200)
+        rand = random.randint(0,200)
+        await client.send_message(message.channel, nth(a,rand).url)
+
+    elif message.content.lower().startswith('!me_irl'):
+        r = praw.Reddit(user_agent='asdfasdfasdf')
+        subreddit = r.get_subreddit("me_irl")
+        a = subreddit.get_top_from_all(limit=200)
+        rand = random.randint(0,200)
+        await client.send_message(message.channel, nth(a,rand).url)
 
     elif message.content =='!startgame' and not game_ongoing:
         game_ongoing = True
@@ -113,7 +129,7 @@ def update_player_list(quitters):
 
 
 def combine_png(cards, name):
-    pngs = ["resources/"+str(c)+".png" for c in cards]
+    pngs = ["resources/"+str(c)+".jpg" for c in cards]
     images = list(map(Image.open, pngs))
     widths, heights = zip(*(i.size for i in images))
 
@@ -177,6 +193,11 @@ def create_message(game):
         msg += str(pots) +"\n\n"
         msg += "@"+players[game.action].name + ", it's your turn. Respond with:\n!(R)aise\t!(C)all\t!(F)old"
     return msg
+
+def nth(iterable, n, default=None):
+    "Returns the nth item or a default value"
+    return next(islice(iterable, n, None), default)
+
 
 import password
 client.run(password.token)

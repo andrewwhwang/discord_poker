@@ -168,10 +168,10 @@ class Texasholdem():
 
     def raise_up(self,player,num):
         self.highest_bet += num# + player.current_bet
-        bet = min(self.highest_bet, player.chips)
+        bet = min(self.highest_bet - player.current_bet, player.chips)
         self.pots.add_bet(player, bet)
         player.chips -= bet
-        player.current_bet += bet
+        player.current_bet = self.highest_bet 
         if player.chips <= 0:
             self.all_in_players.append(player)
 
@@ -269,17 +269,17 @@ def create_message(game):
     return msg
 
 
-game = Texasholdem(['ann','bob'])
+# game = Texasholdem(['ann','bob','cat','dan'])
 # game.players[0].change_chips(750)
 # game.players[1].change_chips(-500)
 #
 #
-game.parse("!yes", "random")
+# game.parse("!yes", "random")
 # print([p.max_per for p in game.pots.list_pots])
-print(create_message(game))
+# print(create_message(game))
 # print("....................................................................")
-game.parse('!r 980', 'bob')
-print(create_message(game))
+# game.parse('!r 980', 'bob')
+# print(create_message(game))
 # print("....................................................................")
 # game.parse('!c', 'ann')
 # print(create_message(game))
