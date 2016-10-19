@@ -75,7 +75,7 @@ async def on_message(message):
             if (diff < time and diff > 0 and log.content == "!me"
                 and (log.author not in player_list)):
                 player_list.append(log.author)
-        if len(player_list) >= 1:##############################normal = 2
+        if len(player_list) >= 2:##############################normal = 2
             await client.send_message(message.channel, "```Players registered:\n\t"+
                                                         "\n\t".join(str(e) for e in player_list)+
                                                         "\nIs this correct? !yes/!no```")
