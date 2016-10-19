@@ -3,8 +3,9 @@ import random
 import asyncio
 from texasholdem import Texasholdem
 from PIL import Image
-import praw
+from praw import Reddit
 from itertools import islice
+from os import remove
 
 game_ongoing = False
 client = discord.Client()
@@ -32,8 +33,8 @@ async def on_message(message):
         "\t!help\t     Displays this message\n"
         "\t!startgame\tStarts an game of texas holdem\n"
         "\t!stopgame\t Ends the current game for everyone\n"
-        "\t!quit\t     Removes only you from the current game(doesn't works)\n"
-        "\t!join\t     Join the current game(doesn't works)\n"
+        "\t!quit\t     Removes only you from the current game(not sure if working)\n"
+        "\t!join\t     Join the current game(doesn't work)\n"
         "\t!status\t   Repeats the status of the game\n"
         "\t!(C)all\t   Call\n"
         "\t!(C)heck\t  Check\n"
@@ -41,14 +42,14 @@ async def on_message(message):
         "\t!(R)aise x\tRaise by x amount\n```")
 
     elif message.content.lower().startswith('!just'):
-        r = praw.Reddit(user_agent='asdfasdfasdf')
+        r = Reddit(user_agent='asdfasdfasdf')
         subreddit = r.get_subreddit("justfuckmyshitup")
         a = subreddit.get_top_from_all(limit=200)
         rand = random.randint(0,200)
         await client.send_message(message.channel, nth(a,rand).url)
 
     elif message.content.lower().startswith('!me_irl'):
-        r = praw.Reddit(user_agent='asdfasdfasdf')
+        r = Reddit(user_agent='asdfasdfasdf')
         subreddit = r.get_subreddit("me_irl")
         a = subreddit.get_top_from_all(limit=200)
         rand = random.randint(0,200)
@@ -74,7 +75,7 @@ async def on_message(message):
             if (diff < time and diff > 0 and log.content == "!me"
                 and (log.author not in player_list)):
                 player_list.append(log.author)
-        if len(player_list) >= 2:##############################normal = 2
+        if len(player_list) >= 1:##############################normal = 2
             await client.send_message(message.channel, "```Players registered:\n\t"+
                                                         "\n\t".join(str(e) for e in player_list)+
                                                         "\nIs this correct? !yes/!no```")
@@ -99,7 +100,7 @@ async def on_message(message):
             player_list.remove(message.author)
             for p in game.players:
                 if p.name == str(message.author):
-                    game.players.remove(p)
+                    game.losers.append(p)
         elif message.content == "!status":
             await client.send_message(message.channel, create_message(game))
             if len(game.com_cards) != 0 and len(game.com_cards) != num_com_cards:
@@ -113,6 +114,7 @@ async def on_message(message):
                 if command == 0:
                     for i, p in enumerate(player_list):
                         await client.send_file(p, combine_png([str(c) for c in game.players[i].hand.cards], str(p)))
+                        remove('tmp/'+str(p)+'.png')
                 await client.send_message(message.channel, create_message(game))
                 # if game.com_cards != []:
                 if len(game.com_cards) != 0 and len(game.com_cards) != num_com_cards:
