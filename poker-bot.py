@@ -3,7 +3,6 @@ import random
 import asyncio
 from texasholdem import Texasholdem
 from PIL import Image
-from praw import Reddit
 from itertools import islice
 from os import remove
 
@@ -40,20 +39,6 @@ async def on_message(message):
         "\t!(C)heck\t  Check\n"
         "\t!(F)old\t   Fold\n"
         "\t!(R)aise x\tRaise by x amount\n```")
-
-    elif message.content.lower().startswith('!just'):
-        r = Reddit(user_agent='asdfasdfasdf')
-        subreddit = r.get_subreddit("justfuckmyshitup")
-        a = subreddit.get_top_from_all(limit=200)
-        rand = random.randint(0,200)
-        await client.send_message(message.channel, nth(a,rand).url)
-
-    elif message.content.lower().startswith('!me_irl'):
-        r = Reddit(user_agent='asdfasdfasdf')
-        subreddit = r.get_subreddit("me_irl")
-        a = subreddit.get_top_from_all(limit=200)
-        rand = random.randint(0,200)
-        await client.send_message(message.channel, nth(a,rand).url)
 
     elif message.content =='!startgame' and not game_ongoing:
         game_ongoing = True
