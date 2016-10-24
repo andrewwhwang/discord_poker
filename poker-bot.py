@@ -116,7 +116,7 @@ def update_player_list(quitters):
 
 
 def combine_png(cards, name):
-    pngs = ["resources/"+str(c)+".jpg" for c in cards]
+    pngs = ["resources/"+str(c)+".png" for c in cards]
     images = list(map(Image.open, pngs))
     widths, heights = zip(*(i.size for i in images))
 
