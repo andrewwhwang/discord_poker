@@ -39,7 +39,7 @@ class Texasholdem():
         for i, player in enumerate(self.players):
             #deal player hold cards
             player.hand = hand.Hand(self.deck.draw(2))
-            print(player, player.hand)
+            #print(player, player.hand)
             player.has_acted = False
 
             #
@@ -52,7 +52,7 @@ class Texasholdem():
             self.action = (1 + self.dealer) % len(self.players)
     #############main functions##############
     def setup_game(self):
-        print("======================setting up game======================")
+        #print("======================setting up game======================")
         #to work, needs self.dealer to be correct
         self.pots = pot.Pots(self.players)
         self.com_cards = []
@@ -97,7 +97,7 @@ class Texasholdem():
             self.next_round()
 
     def next_round(self):
-        print("--------------------------round "+str(self.round+1)+"--------------------------")
+        #print("--------------------------round "+str(self.round+1)+"--------------------------")
         com_card_map = [0,3,1,1]
         # self.losers = []
         self.round += 1
@@ -111,7 +111,7 @@ class Texasholdem():
                 p.hand += draw
                 p.has_acted = False
             self.com_cards += list(draw)
-            print(self.com_cards)
+            #print(self.com_cards)
         else:
             self.winner("")
 
@@ -150,7 +150,7 @@ class Texasholdem():
         #get non folded players and reveal their cards
         self.dealer += 1
         self.dealt = False
-        print("==========================endofgame==========================")
+        #print("==========================endofgame==========================")
 
     def call(self, player):
         bet = min(self.highest_bet - player.current_bet, player.chips)
