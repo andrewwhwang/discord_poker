@@ -3,7 +3,6 @@ import random
 import asyncio
 from texasholdem import Texasholdem
 from PIL import Image
-from praw import Reddit
 from itertools import islice
 from os import remove
 
@@ -41,20 +40,6 @@ async def on_message(message):
         "\t!(F)old\t   Fold\n"
         "\t!(R)aise x\tRaise by x amount\n```")
 
-    elif message.content.lower().startswith('!just'):
-        r = Reddit(user_agent='asdfasdfasdf')
-        subreddit = r.get_subreddit("justfuckmyshitup")
-        a = subreddit.get_top_from_all(limit=200)
-        rand = random.randint(0,200)
-        await client.send_message(message.channel, nth(a,rand).url)
-
-    elif message.content.lower().startswith('!me_irl'):
-        r = Reddit(user_agent='asdfasdfasdf')
-        subreddit = r.get_subreddit("me_irl")
-        a = subreddit.get_top_from_all(limit=200)
-        rand = random.randint(0,200)
-        await client.send_message(message.channel, nth(a,rand).url)
-
     elif message.content =='!startgame' and not game_ongoing:
         game_ongoing = True
         player_list = []
@@ -75,7 +60,7 @@ async def on_message(message):
             if (diff < time and diff > 0 and log.content == "!me"
                 and (log.author not in player_list)):
                 player_list.append(log.author)
-        if len(player_list) >= 1:##############################normal = 2
+        if len(player_list) >= 2:##############################normal = 2
             await client.send_message(message.channel, "```Players registered:\n\t"+
                                                         "\n\t".join(str(e) for e in player_list)+
                                                         "\nIs this correct? !yes/!no```")
